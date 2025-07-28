@@ -1,0 +1,85 @@
+# include <limits.h>
+# include <stdio.h>
+# include <stdlib.h>
+
+
+typedef struct List {
+    int val;
+    struct List *next;
+} List, *ListPtr;
+
+ListPtr createList() {
+    /*
+        Define sentinels
+
+        In that case every insert and remove will occur between two elements
+        and the head will be the same always
+    */
+    ListPtr left = (ListPtr)malloc(sizeof(List));
+    if (left == NULL) return NULL;
+
+    left->next = (ListPtr)calloc(1, sizeof(List));
+    // Can generate memory leak
+    if (left->next == NULL) return NULL;
+
+    left->val = left->next->val = INT_MIN;
+
+    return left;
+}
+
+int append(ListPtr list, int val) {
+    ListPtr newElement = (ListPtr)malloc(sizeof(List));
+    if (newElement == NULL) return 1;
+
+    ListPtr current = list;
+    while (current->next->val != INT_MIN) {
+        current = current->next;
+    }
+
+    newElement->val = val;
+    newElement->next = current->next;
+    current->next = newElement;
+
+    return 0;
+}
+
+void printList(ListPtr list) {
+    ListPtr current = list->next;
+    int empty = 1;
+    
+    while (current->val != INT_MIN) {
+        printf("%d --> ", current->val);
+        current = current->next;
+        empty = 0;
+    }
+
+    if (empty == 1) puts("The List is empty!");
+    else puts("");
+}
+
+void freeList(ListPtr *list) {
+    // Will be at least two elements on every list
+    ListPtr currentElement = *list;
+    ListPtr nextElement = currentElement->next;
+
+    // In that case the code does not check 'next' field of NULL reference
+    while (nextElement != NULL) {
+        free(currentElement);
+        currentElement = nextElement;
+        nextElement = nextElement->next;
+    }
+    free(currentElement);
+}
+
+int main() {
+    ListPtr list = createList();
+    append(list, 5);
+    append(list, 2);
+    append(list, 10);
+    append(list, 27);
+    printList(list);
+
+    freeList(&list);
+
+    return 0;
+}
