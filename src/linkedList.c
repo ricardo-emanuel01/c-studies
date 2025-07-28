@@ -76,6 +76,26 @@ int insertAt(ListPtr list, int val, int index) {
     return 0;
 }
 
+// The name 'remove' is already defined in stdio.h
+int removeLL(ListPtr list, int toRemove) {
+    ListPtr current = list;
+    
+    while (current->next->val != INT_MIN && current->next->val != toRemove) {
+        current = current->next;
+    }
+    
+    if (current->next->val == toRemove) {
+        ListPtr elementToRemove = current->next;
+        current->next = current->next->next;
+        free(elementToRemove);
+
+        return 0;
+    }
+
+    // The element does not exist on the list
+    return 1;
+}
+
 void freeList(ListPtr *list) {
     // Will be at least two elements on every list
     ListPtr currentElement = *list;
@@ -99,6 +119,11 @@ int main() {
     insertAt(list, 33, 0);
     insertAt(list, 0, 30);
     insertAt(list, 97, 3);
+    printList(list);
+    int removeRes = removeLL(list, 100);
+    if (removeRes != 0) printf("Remove returned: %d\n", removeRes);
+    removeRes = removeLL(list, 10);
+    if (removeRes != 0) printf("Remove returned: %d\n", removeRes);
     printList(list);
 
     freeList(&list);
