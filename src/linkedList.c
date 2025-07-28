@@ -57,6 +57,25 @@ void printList(ListPtr list) {
     else puts("");
 }
 
+// If index > list size the value will be appended
+int insertAt(ListPtr list, int val, int index) {
+    ListPtr newElement = (ListPtr)malloc(sizeof(List));
+    if (newElement == NULL) return 1;
+
+    ListPtr current = list;
+
+    while (current->next->val != INT_MIN && index > 0) {
+        index--;
+        current = current->next;
+    }
+
+    newElement->val = val;
+    newElement->next = current->next;
+    current->next = newElement;
+
+    return 0;
+}
+
 void freeList(ListPtr *list) {
     // Will be at least two elements on every list
     ListPtr currentElement = *list;
@@ -77,6 +96,9 @@ int main() {
     append(list, 2);
     append(list, 10);
     append(list, 27);
+    insertAt(list, 33, 0);
+    insertAt(list, 0, 30);
+    insertAt(list, 97, 3);
     printList(list);
 
     freeList(&list);
